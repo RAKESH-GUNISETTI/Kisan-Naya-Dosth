@@ -12,6 +12,7 @@ const Navigation = () => {
     { path: "/dashboard", label: "Dashboard" },
     { path: "/crop-planning", label: "Crop Planning" },
     { path: "/ai-doctor", label: "AI Doctor" },
+    { path: "/reports", label: "Reports" },
   ];
 
   return (

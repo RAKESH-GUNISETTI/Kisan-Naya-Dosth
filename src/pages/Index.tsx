@@ -1,6 +1,8 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Navigation from "@/components/Navigation";
+import OnboardingModal from "@/components/OnboardingModal";
 import { Link } from "react-router-dom";
 import { Brain, TrendingUp, Cloud, Users, Leaf, BarChart3 } from "lucide-react";
 import heroImage from "@/assets/hero-farm.jpg";
@@ -9,9 +11,21 @@ import cropPlanningIcon from "@/assets/crop-planning-icon.png";
 import weatherIcon from "@/assets/weather-icon.png";
 
 const Index = () => {
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    // Show onboarding for first-time visitors
+    const hasSeenOnboarding = localStorage.getItem("hasSeenOnboarding");
+    if (!hasSeenOnboarding) {
+      setShowOnboarding(true);
+      localStorage.setItem("hasSeenOnboarding", "true");
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
+      <OnboardingModal open={showOnboarding} onClose={() => setShowOnboarding(false)} />
       
       {/* Hero Section */}
       <section className="relative overflow-hidden">
@@ -56,119 +70,133 @@ const Index = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card className="shadow-soft hover:shadow-medium transition-all duration-300">
-            <CardHeader>
-              <img src={cropPlanningIcon} alt="Crop Planning" className="h-16 w-16 mb-4" />
-              <CardTitle className="flex items-center gap-2">
-                Strategic Crop Planning
-              </CardTitle>
-              <CardDescription>
-                Interactive planning with real-time cost and yield projections
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• Voice & slider interface for easy input</li>
-                <li>• Real-time profitability calculations</li>
-                <li>• Scenario planning & what-if analysis</li>
-                <li>• Budget optimization tools</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-soft hover:shadow-medium transition-all duration-300">
-            <CardHeader>
-              <img src={aiDoctorIcon} alt="AI Doctor" className="h-16 w-16 mb-4" />
-              <CardTitle className="flex items-center gap-2">
-                AI Crop Doctor
-              </CardTitle>
-              <CardDescription>
-                Instant pest and disease diagnosis from photos
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• Computer vision pest identification</li>
-                <li>• Treatment action plans with costs</li>
-                <li>• Organic & chemical remedy options</li>
-                <li>• Yield impact predictions</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-soft hover:shadow-medium transition-all duration-300">
-            <CardHeader>
-              <img src={weatherIcon} alt="Weather" className="h-16 w-16 mb-4" />
-              <CardTitle className="flex items-center gap-2">
-                Smart Weather Alerts
-              </CardTitle>
-              <CardDescription>
-                Proactive forecasts that update your crop plan
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• Hyper-local weather forecasts</li>
-                <li>• Advance anomaly warnings</li>
-                <li>• Irrigation window recommendations</li>
-                <li>• Dynamic plan adjustments</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-soft hover:shadow-medium transition-all duration-300">
-            <CardHeader>
-              <TrendingUp className="h-16 w-16 mb-4 text-success" />
-              <CardTitle>Yield & Profit Tracking</CardTitle>
-              <CardDescription>
-                Monitor your farm's performance in real-time
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• Real-time profit per acre calculations</li>
-                <li>• Market price integration</li>
-                <li>• Growth stage monitoring</li>
-                <li>• Historical comparisons</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-soft hover:shadow-medium transition-all duration-300">
-            <CardHeader>
-              <Users className="h-16 w-16 mb-4 text-accent" />
-              <CardTitle>Family Collaboration</CardTitle>
-              <CardDescription>
-                Share farm plans and assign tasks easily
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• Multi-user farm profiles</li>
-                <li>• Role-based permissions</li>
-                <li>• Shared task management</li>
-                <li>• WhatsApp report sharing</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-soft hover:shadow-medium transition-all duration-300">
-            <CardHeader>
-              <BarChart3 className="h-16 w-16 mb-4 text-secondary" />
-              <CardTitle>Community Intelligence</CardTitle>
-              <CardDescription>
-                Crowdsourced pest alerts and local insights
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• Live pest outbreak map</li>
-                <li>• Anonymous community reporting</li>
-                <li>• Local market trends</li>
-                <li>• Best practice sharing</li>
-              </ul>
-            </CardContent>
-          </Card>
+          {[
+            {
+              icon: cropPlanningIcon,
+              title: "Strategic Crop Planning",
+              desc: "Interactive planning with real-time cost and yield projections",
+              features: [
+                "Voice & slider interface for easy input",
+                "Real-time profitability calculations",
+                "Scenario planning & what-if analysis",
+                "Budget optimization tools"
+              ],
+              delay: 0
+            },
+            {
+              icon: aiDoctorIcon,
+              title: "AI Crop Doctor",
+              desc: "Instant pest and disease diagnosis from photos",
+              features: [
+                "Computer vision pest identification",
+                "Treatment action plans with costs",
+                "Organic & chemical remedy options",
+                "Yield impact predictions"
+              ],
+              delay: 100
+            },
+            {
+              icon: weatherIcon,
+              title: "Smart Weather Alerts",
+              desc: "Proactive forecasts that update your crop plan",
+              features: [
+                "Hyper-local weather forecasts",
+                "Advance anomaly warnings",
+                "Irrigation window recommendations",
+                "Dynamic plan adjustments"
+              ],
+              delay: 200
+            }
+          ].map((feature, idx) => (
+            <Card 
+              key={idx}
+              className="shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-105 animate-bounce-in"
+              style={{ animationDelay: `${feature.delay}ms` }}
+            >
+              <CardHeader>
+                <img src={feature.icon} alt={feature.title} className="h-16 w-16 mb-4 animate-float" />
+                <CardTitle className="flex items-center gap-2">
+                  {feature.title}
+                </CardTitle>
+                <CardDescription>
+                  {feature.desc}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {feature.features.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          ))}
+          
+          {[
+            {
+              Icon: TrendingUp,
+              title: "Yield & Profit Tracking",
+              desc: "Monitor your farm's performance in real-time",
+              features: [
+                "Real-time profit per acre calculations",
+                "Market price integration",
+                "Growth stage monitoring",
+                "Historical comparisons"
+              ],
+              color: "text-success",
+              delay: 300
+            },
+            {
+              Icon: Users,
+              title: "Family Collaboration",
+              desc: "Share farm plans and assign tasks easily",
+              features: [
+                "Multi-user farm profiles",
+                "Role-based permissions",
+                "Shared task management",
+                "WhatsApp report sharing"
+              ],
+              color: "text-accent",
+              delay: 400
+            },
+            {
+              Icon: BarChart3,
+              title: "Community Intelligence",
+              desc: "Crowdsourced pest alerts and local insights",
+              features: [
+                "Live pest outbreak map",
+                "Anonymous community reporting",
+                "Local market trends",
+                "Best practice sharing"
+              ],
+              color: "text-secondary",
+              delay: 500
+            }
+          ].map((feature, idx) => {
+            const Icon = feature.Icon;
+            return (
+              <Card 
+                key={idx}
+                className="shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-105 animate-bounce-in"
+                style={{ animationDelay: `${feature.delay}ms` }}
+              >
+                <CardHeader>
+                  <Icon className={`h-16 w-16 mb-4 ${feature.color} animate-float`} />
+                  <CardTitle>{feature.title}</CardTitle>
+                  <CardDescription>
+                    {feature.desc}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    {feature.features.map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </section>
 
