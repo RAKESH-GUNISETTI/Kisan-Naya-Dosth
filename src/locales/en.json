@@ -1,0 +1,89 @@
+{
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "cropPlanning": "Crop Planning",
+    "aiDoctor": "AI Doctor",
+    "reports": "Reports",
+    "login": "Login",
+    "logout": "Logout",
+    "profile": "Profile"
+  },
+  "hero": {
+    "title": "Your AI-Powered Personal Farm & Crop Management Companion",
+    "subtitle": "Make smarter farming decisions with end-to-end crop guidance, real-time insights, and proactive alerts—all in your own language.",
+    "getStarted": "Get Started Free",
+    "tryCropPlanning": "Try Crop Planning"
+  },
+  "features": {
+    "title": "Everything You Need to Succeed",
+    "subtitle": "From planning to harvest, we've got you covered with AI-powered insights and actionable recommendations",
+    "cropPlanning": {
+      "title": "Strategic Crop Planning",
+      "desc": "Interactive planning with real-time cost and yield projections"
+    },
+    "aiDoctor": {
+      "title": "AI Crop Doctor",
+      "desc": "Instant pest and disease diagnosis from photos"
+    },
+    "weather": {
+      "title": "Smart Weather Alerts",
+      "desc": "Proactive forecasts that update your crop plan"
+    },
+    "tracking": {
+      "title": "Yield & Profit Tracking",
+      "desc": "Monitor your farm's performance in real-time"
+    },
+    "collaboration": {
+      "title": "Family Collaboration",
+      "desc": "Share farm plans and assign tasks easily"
+    },
+    "community": {
+      "title": "Community Intelligence",
+      "desc": "Crowdsourced pest alerts and local insights"
+    }
+  },
+  "cta": {
+    "title": "Ready to Transform Your Farming?",
+    "subtitle": "Join thousands of farmers who are making smarter, data-driven decisions every day",
+    "startTrial": "Start Your Free Trial"
+  },
+  "footer": {
+    "copyright": "© 2024 Farmer Friend. Empowering farmers with AI technology."
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full Name",
+    "forgotPassword": "Forgot Password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "resetPassword": "Reset Password",
+    "sendResetLink": "Send Reset Link",
+    "backToLogin": "Back to Login"
+  },
+  "dashboard": {
+    "welcome": "Welcome back",
+    "quickStats": "Quick Stats",
+    "acreage": "Total Acreage",
+    "expectedYield": "Expected Yield",
+    "currentWeather": "Current Weather",
+    "soilMoisture": "Soil Moisture",
+    "activeAlerts": "Active Alerts",
+    "upcomingTasks": "Upcoming Tasks",
+    "marketPrices": "Market Prices"
+  },
+  "weather": {
+    "temperature": "Temperature",
+    "humidity": "Humidity",
+    "windSpeed": "Wind Speed",
+    "condition": "Condition"
+  },
+  "chatbot": {
+    "title": "AI Assistant",
+    "placeholder": "Ask me anything about farming...",
+    "send": "Send"
+  }
+}

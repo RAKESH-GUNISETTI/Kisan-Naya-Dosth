@@ -1,73 +1,150 @@
-import { Link, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Sprout, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Leaf, LayoutDashboard, Sprout, Stethoscope, FileText, Moon, Sun, LogOut, User } from "lucide-react";
+import { useTranslation } from 'react-i18next';
+import { useTheme } from '@/contexts/ThemeContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from './ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 
 const Navigation = () => {
   const location = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  const { theme, toggleTheme } = useTheme();
+  const { user, signOut } = useAuth();
 
   const navItems = [
-    { path: "/", label: "Home" },
-    { path: "/dashboard", label: "Dashboard" },
-    { path: "/crop-planning", label: "Crop Planning" },
-    { path: "/ai-doctor", label: "AI Doctor" },
-    { path: "/reports", label: "Reports" },
+    { name: t('nav.home'), icon: Leaf, path: "/" },
+    { name: t('nav.dashboard'), icon: LayoutDashboard, path: "/dashboard" },
+    { name: t('nav.cropPlanning'), icon: Sprout, path: "/crop-planning" },
+    { name: t('nav.aiDoctor'), icon: Stethoscope, path: "/ai-doctor" },
+    { name: t('nav.reports'), icon: FileText, path: "/reports" },
   ];
 
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem('language', lang);
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/');
+  };
+
   return (
-    <nav className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
+    <nav className="bg-card border-b sticky top-0 z-50 backdrop-blur-sm bg-card/80 shadow-soft">
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <Sprout className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold text-foreground">Farmer Friend</span>
+        <div className="flex items-center justify-between h-16">
+          <Link to="/" className="flex items-center gap-2 font-bold text-xl text-primary hover:text-primary/80 transition-all hover:scale-105">
+            <Leaf className="h-6 w-6 animate-float" />
+            Farmer Friend
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`text-sm font-medium transition-colors hover:text-primary ${
-                  location.pathname === item.path ? "text-primary" : "text-muted-foreground"
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
-            <Button size="sm">Get Started</Button>
+          <div className="hidden md:flex items-center gap-1">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 ${
+                    isActive
+                      ? "bg-primary text-primary-foreground shadow-soft scale-105"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted hover:scale-105"
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  <span className="font-medium">{item.name}</span>
+                </Link>
+              );
+            })}
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
+          {/* Right side controls */}
+          <div className="flex items-center gap-2">
+            {/* Theme toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="hover:scale-110 transition-transform"
+            >
+              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </Button>
+
+            {/* Language selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="font-medium">
+                  {i18n.language.toUpperCase()}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => changeLanguage('en')}>
+                  English
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => changeLanguage('hi')}>
+                  हिन्दी
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => changeLanguage('te')}>
+                  తెలుగు
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Auth controls */}
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform">
+                    <User className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    {t('nav.logout')}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button variant="default" onClick={() => navigate('/auth')} className="hidden md:flex">
+                {t('nav.login')}
+              </Button>
+            )}
+          </div>
         </div>
+      </div>
 
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
-          <div className="md:hidden py-4 animate-slide-up">
-            {navItems.map((item) => (
+      {/* Mobile Navigation */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t py-2 px-4 z-50 shadow-soft">
+        <div className="flex items-center justify-around">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.path;
+            return (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`block py-2 text-sm font-medium transition-colors hover:text-primary ${
-                  location.pathname === item.path ? "text-primary" : "text-muted-foreground"
+                className={`flex flex-col items-center p-2 rounded-lg transition-all ${
+                  isActive
+                    ? "text-primary scale-110"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
-                onClick={() => setMobileMenuOpen(false)}
               >
-                {item.label}
+                <Icon className="h-5 w-5" />
+                <span className="text-xs mt-1">{item.name}</span>
               </Link>
-            ))}
-            <Button size="sm" className="w-full mt-4">Get Started</Button>
-          </div>
-        )}
+            );
+          })}
+        </div>
       </div>
     </nav>
   );

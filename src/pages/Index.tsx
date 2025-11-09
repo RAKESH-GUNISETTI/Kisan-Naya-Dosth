@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Navigation from "@/components/Navigation";
 import OnboardingModal from "@/components/OnboardingModal";
 import { Link } from "react-router-dom";
-import { Brain, TrendingUp, Cloud, Users, Leaf, BarChart3 } from "lucide-react";
+import { TrendingUp, Users, BarChart3 } from "lucide-react";
 import heroImage from "@/assets/hero-farm.jpg";
 import aiDoctorIcon from "@/assets/ai-doctor-icon.png";
 import cropPlanningIcon from "@/assets/crop-planning-icon.png";
 import weatherIcon from "@/assets/weather-icon.png";
 
 const Index = () => {
+  const { t } = useTranslation();
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
@@ -41,17 +43,17 @@ const Index = () => {
         <div className="relative container mx-auto px-4 py-20 md:py-32">
           <div className="max-w-3xl animate-fade-in">
             <h1 className="text-4xl md:text-6xl font-bold text-primary-foreground mb-6">
-              Your AI-Powered Personal Farm & Crop Management Companion
+              {t('hero.title')}
             </h1>
             <p className="text-lg md:text-xl text-primary-foreground/90 mb-8">
-              Make smarter farming decisions with end-to-end crop guidance, real-time insights, and proactive alerts—all in your own language.
+              {t('hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild size="lg" className="text-lg">
-                <Link to="/dashboard">Get Started Free</Link>
+              <Button asChild size="lg" className="text-lg hover:scale-105 transition-transform">
+                <Link to="/dashboard">{t('hero.getStarted')}</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="bg-white/10 backdrop-blur text-white border-white/20 hover:bg-white/20">
-                <Link to="/crop-planning">Try Crop Planning</Link>
+              <Button asChild size="lg" variant="outline" className="bg-white/10 backdrop-blur text-white border-white/20 hover:bg-white/20 hover:scale-105 transition-transform">
+                <Link to="/crop-planning">{t('hero.tryCropPlanning')}</Link>
               </Button>
             </div>
           </div>
@@ -62,10 +64,10 @@ const Index = () => {
       <section className="container mx-auto px-4 py-20">
         <div className="text-center mb-16 animate-slide-up">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Everything You Need to Succeed
+            {t('features.title')}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            From planning to harvest, we've got you covered with AI-powered insights and actionable recommendations
+            {t('features.subtitle')}
           </p>
         </div>
 
