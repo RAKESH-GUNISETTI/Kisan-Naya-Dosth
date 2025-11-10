@@ -59,7 +59,7 @@ const Profile = () => {
       setProfile(data);
       setFullName(data?.full_name || '');
       setEmail(data?.email || user.email || '');
-      setFarmingDetails(data?.farming_details || {});
+      setFarmingDetails((data?.farming_details as FarmingDetails) || {});
     } catch (error: any) {
       toast({
         title: "Error",
