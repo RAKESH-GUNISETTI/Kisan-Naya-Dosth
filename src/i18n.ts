@@ -6,6 +6,9 @@ import en from './locales/en.json';
 import hi from './locales/hi.json';
 import te from './locales/te.json';
 
+// Get saved language from localStorage
+const savedLanguage = localStorage.getItem('language') || 'en';
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -15,6 +18,7 @@ i18n
       hi: { translation: hi },
       te: { translation: te }
     },
+    lng: savedLanguage,
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false

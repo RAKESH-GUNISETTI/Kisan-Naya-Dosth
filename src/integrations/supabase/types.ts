@@ -19,6 +19,7 @@ export type Database = {
           avatar_url: string | null
           created_at: string | null
           email: string | null
+          farming_details: Json | null
           full_name: string | null
           id: string
           language: string | null
@@ -29,6 +30,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string | null
           email?: string | null
+          farming_details?: Json | null
           full_name?: string | null
           id: string
           language?: string | null
@@ -39,6 +41,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string | null
           email?: string | null
+          farming_details?: Json | null
           full_name?: string | null
           id?: string
           language?: string | null
@@ -46,6 +49,38 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      chat_history: {
+        Row: {
+          id: string
+          user_id: string
+          messages: Json
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          messages?: Json
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          messages?: Json
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {

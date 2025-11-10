@@ -7,7 +7,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName: string) => Promise<void>;
+  signUp: (email: string, password: string, fullName: string) => Promise<{ user: User | null; session: Session | null } | null>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -43,25 +43,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: { full_name: fullName },
-          emailRedirectTo: `${window.location.origin}/`
+          emailRedirectTo: `${window.location.origin}/dashboard`
         }
       });
       
       if (error) throw error;
       
+      // If email confirmation is disabled, user is immediately signed in
+      if (data.user) {
+        // Wait a bit for the profile to be created by the trigger
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+      
       toast({
         title: "Account created!",
-        description: "You can now log in to your account.",
+        description: data.user ? "Welcome! Setting up your profile..." : "Please check your email to confirm your account.",
       });
+      
+      return data;
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to create account. Please try again.",
         variant: "destructive",
       });
       throw error;

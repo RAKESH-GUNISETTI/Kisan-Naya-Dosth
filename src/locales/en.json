@@ -10,7 +10,7 @@
     "profile": "Profile"
   },
   "hero": {
-    "title": "Your AI-Powered Personal Farm & Crop Management Companion",
+    "title": "Farmer Friend: Voice-First, Hyper-Local Agri-Tech for Radical Farmer Empowerment.",
     "subtitle": "Make smarter farming decisions with end-to-end crop guidance, real-time insights, and proactive alerts—all in your own language.",
     "getStarted": "Get Started Free",
     "tryCropPlanning": "Try Crop Planning"
@@ -20,27 +20,51 @@
     "subtitle": "From planning to harvest, we've got you covered with AI-powered insights and actionable recommendations",
     "cropPlanning": {
       "title": "Strategic Crop Planning",
-      "desc": "Interactive planning with real-time cost and yield projections"
+      "desc": "Interactive planning with real-time cost and yield projections",
+      "feature1": "Voice & slider interface for easy input",
+      "feature2": "Real-time profitability calculations",
+      "feature3": "Scenario planning & what-if analysis",
+      "feature4": "Budget optimization tools"
     },
     "aiDoctor": {
       "title": "AI Crop Doctor",
-      "desc": "Instant pest and disease diagnosis from photos"
+      "desc": "Instant pest and disease diagnosis from photos",
+      "feature1": "Computer vision pest identification",
+      "feature2": "Treatment action plans with costs",
+      "feature3": "Organic & chemical remedy options",
+      "feature4": "Yield impact predictions"
     },
     "weather": {
       "title": "Smart Weather Alerts",
-      "desc": "Proactive forecasts that update your crop plan"
+      "desc": "Proactive forecasts that update your crop plan",
+      "feature1": "Hyper-local weather forecasts",
+      "feature2": "Advance anomaly warnings",
+      "feature3": "Irrigation window recommendations",
+      "feature4": "Dynamic plan adjustments"
     },
     "tracking": {
       "title": "Yield & Profit Tracking",
-      "desc": "Monitor your farm's performance in real-time"
+      "desc": "Monitor your farm's performance in real-time",
+      "feature1": "Real-time profit per acre calculations",
+      "feature2": "Market price integration",
+      "feature3": "Growth stage monitoring",
+      "feature4": "Historical comparisons"
     },
     "collaboration": {
       "title": "Family Collaboration",
-      "desc": "Share farm plans and assign tasks easily"
+      "desc": "Share farm plans and assign tasks easily",
+      "feature1": "Multi-user farm profiles",
+      "feature2": "Role-based permissions",
+      "feature3": "Shared task management",
+      "feature4": "WhatsApp report sharing"
     },
     "community": {
       "title": "Community Intelligence",
-      "desc": "Crowdsourced pest alerts and local insights"
+      "desc": "Crowdsourced pest alerts and local insights",
+      "feature1": "Live pest outbreak map",
+      "feature2": "Anonymous community reporting",
+      "feature3": "Local market trends",
+      "feature4": "Best practice sharing"
     }
   },
   "cta": {
@@ -49,7 +73,17 @@
     "startTrial": "Start Your Free Trial"
   },
   "footer": {
-    "copyright": "© 2024 Farmer Friend. Empowering farmers with AI technology."
+    "copyright": "© 2024 Farmer Friend. Empowering farmers with AI technology.",
+    "tagline": "Voice-First, Hyper-Local Agri-Tech for Radical Farmer Empowerment",
+    "quickLinks": "Quick Links",
+    "support": "Support",
+    "contact": "Contact Us",
+    "email": "Email",
+    "phone": "Phone",
+    "helpCenter": "Help Center",
+    "faq": "FAQ",
+    "address": "123 Farm Street, Agriculture District",
+    "rights": "All rights reserved."
   },
   "auth": {
     "login": "Login",
@@ -62,7 +96,8 @@
     "hasAccount": "Already have an account?",
     "resetPassword": "Reset Password",
     "sendResetLink": "Send Reset Link",
-    "backToLogin": "Back to Login"
+    "backToLogin": "Back to Login",
+    "passwordHint": "Password must be at least 6 characters"
   },
   "dashboard": {
     "welcome": "Welcome back",
@@ -84,6 +119,47 @@
   "chatbot": {
     "title": "AI Assistant",
     "placeholder": "Ask me anything about farming...",
-    "send": "Send"
+    "send": "Send",
+    "voiceInput": "Voice Input",
+    "voiceOutput": "Voice Output",
+    "speaking": "Speaking...",
+    "listening": "Listening...",
+    "clickToSpeak": "Click to speak",
+    "stopSpeaking": "Stop speaking",
+    "welcomeMessage": "Ask me anything about farming!",
+    "welcomeSubtext": "You can type or use voice input"
+  },
+  "profile": {
+    "title": "Profile",
+    "farmingDetails": "Farming Details",
+    "personalInfo": "Personal Information",
+    "location": "Location",
+    "state": "State",
+    "district": "District",
+    "village": "Village",
+    "landArea": "Land Area (Acres)",
+    "soilType": "Soil Type",
+    "primaryCrops": "Primary Crops",
+    "farmingExperience": "Farming Experience (Years)",
+    "irrigationType": "Irrigation Type",
+    "farmSize": "Farm Size Category",
+    "annualIncome": "Annual Income from Farming (₹)",
+    "familyMembers": "Family Members Involved",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "updateSuccess": "Profile updated successfully!",
+    "updateError": "Failed to update profile"
+  },
+  "onboarding": {
+    "title": "Complete Your Farming Profile",
+    "subtitle": "Help us personalize your experience by providing your farming details",
+    "step1": "Location & Land",
+    "step2": "Crops & Soil",
+    "step3": "Experience & Resources",
+    "next": "Next",
+    "previous": "Previous",
+    "complete": "Complete Setup",
+    "skip": "Skip for now"
   }
 }

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -7,13 +7,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import FarmingDetailsOnboarding from '@/components/FarmingDetailsOnboarding';
+import { ArrowLeft } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const Auth = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { signUp, signIn, resetPassword } = useAuth();
+  const { signUp, signIn, resetPassword, user } = useAuth();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [showReset, setShowReset] = useState(false);
+  const [showFarmingOnboarding, setShowFarmingOnboarding] = useState(false);
+  const [newlySignedUp, setNewlySignedUp] = useState(false);
 
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [signupData, setSignupData] = useState({ email: '', password: '', fullName: '' });
@@ -36,14 +42,50 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await signUp(signupData.email, signupData.password, signupData.fullName);
-      navigate('/dashboard');
+      const result = await signUp(signupData.email, signupData.password, signupData.fullName);
+      // If user is immediately signed in (email confirmation disabled)
+      if (result?.user) {
+        setNewlySignedUp(true);
+        // Wait for auth state to update
+        setTimeout(() => {
+          setShowFarmingOnboarding(true);
+        }, 1000);
+      } else {
+        // Email confirmation required
+        toast({
+          title: "Check your email",
+          description: "Please confirm your email address to continue.",
+        });
+      }
     } catch (error) {
       // Error handled in AuthContext
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // Check if user just signed up and needs onboarding
+    if (user && newlySignedUp && !showFarmingOnboarding) {
+      // Check if farming details already exist
+      const checkFarmingDetails = async () => {
+        const { supabase } = await import('@/integrations/supabase/client');
+        const { data } = await supabase
+          .from('profiles')
+          .select('farming_details')
+          .eq('id', user.id)
+          .single();
+        
+        if (!data?.farming_details) {
+          setShowFarmingOnboarding(true);
+        } else {
+          navigate('/dashboard');
+          setNewlySignedUp(false);
+        }
+      };
+      checkFarmingDetails();
+    }
+  }, [user, newlySignedUp, showFarmingOnboarding, navigate]);
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,13 +138,35 @@ const Auth = () => {
     );
   }
 
+  if (showFarmingOnboarding) {
+    return (
+      <FarmingDetailsOnboarding 
+        open={showFarmingOnboarding} 
+        onComplete={() => {
+          setShowFarmingOnboarding(false);
+          setNewlySignedUp(false);
+        }} 
+      />
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4 relative">
+      <Button
+        variant="ghost"
+        size="icon"
+        asChild
+        className="absolute top-4 left-4"
+      >
+        <Link to="/">
+          <ArrowLeft className="h-4 w-4" />
+        </Link>
+      </Button>
       <Card className="w-full max-w-md animate-bounce-in shadow-medium">
         <CardHeader>
           <CardTitle className="text-2xl text-center">Farmer Friend</CardTitle>
           <CardDescription className="text-center">
-            Your AI-Powered Farm Management Companion
+            {t('hero.title')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -120,8 +184,10 @@ const Auth = () => {
                     id="login-email"
                     type="email"
                     value={loginData.email}
-                    onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                    onChange={(e) => setLoginData({ ...loginData, email: e.target.value.trim() })}
+                    placeholder={t('auth.email')}
                     required
+                    autoComplete="email"
                   />
                 </div>
                 <div className="space-y-2">
@@ -131,7 +197,10 @@ const Auth = () => {
                     type="password"
                     value={loginData.password}
                     onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                    placeholder={t('auth.password')}
                     required
+                    autoComplete="current-password"
+                    minLength={6}
                   />
                 </div>
                 <Button
@@ -156,8 +225,10 @@ const Auth = () => {
                     id="signup-name"
                     type="text"
                     value={signupData.fullName}
-                    onChange={(e) => setSignupData({ ...signupData, fullName: e.target.value })}
+                    onChange={(e) => setSignupData({ ...signupData, fullName: e.target.value.trim() })}
+                    placeholder={t('auth.fullName')}
                     required
+                    autoComplete="name"
                   />
                 </div>
                 <div className="space-y-2">
@@ -166,8 +237,10 @@ const Auth = () => {
                     id="signup-email"
                     type="email"
                     value={signupData.email}
-                    onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
+                    onChange={(e) => setSignupData({ ...signupData, email: e.target.value.trim().toLowerCase() })}
+                    placeholder={t('auth.email')}
                     required
+                    autoComplete="email"
                   />
                 </div>
                 <div className="space-y-2">
@@ -177,9 +250,14 @@ const Auth = () => {
                     type="password"
                     value={signupData.password}
                     onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
+                    placeholder={t('auth.password')}
                     required
                     minLength={6}
+                    autoComplete="new-password"
                   />
+                  <p className="text-xs text-muted-foreground">
+                    {t('auth.passwordHint')}
+                  </p>
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {t('auth.signup')}

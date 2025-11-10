@@ -41,8 +41,8 @@ const Navigation = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2 font-bold text-xl text-primary hover:text-primary/80 transition-all hover:scale-105">
-            <Leaf className="h-6 w-6 animate-float" />
-            Farmer Friend
+            <img src="/logo.svg" alt="Farmer Friend" className="h-8 w-8 animate-float" />
+            <span className="hidden sm:inline">Farmer Friend</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -108,6 +108,10 @@ const Navigation = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => navigate('/profile')}>
+                    <User className="h-4 w-4 mr-2" />
+                    {t('nav.profile')}
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="h-4 w-4 mr-2" />
                     {t('nav.logout')}

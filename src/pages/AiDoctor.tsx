@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import Navigation from "@/components/Navigation";
-import { Camera, Upload, Scan, AlertTriangle, CheckCircle2, Info } from "lucide-react";
+import { Camera, Upload, Scan, AlertTriangle, CheckCircle2, Info, Loader2, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import aiDoctorIcon from "@/assets/ai-doctor-icon.png";
 
@@ -11,6 +12,10 @@ const AiDoctor = () => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [diagnosis, setDiagnosis] = useState<any>(null);
+  const [selectedTreatment, setSelectedTreatment] = useState<any>(null);
+  const [detailedSteps, setDetailedSteps] = useState<string | null>(null);
+  const [loadingSteps, setLoadingSteps] = useState(false);
+  const [showStepsDialog, setShowStepsDialog] = useState(false);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -64,6 +69,43 @@ const AiDoctor = () => {
     }, 2000);
   };
 
+  const fetchDetailedSteps = async (treatment: any) => {
+    setSelectedTreatment(treatment);
+    setLoadingSteps(true);
+    setShowStepsDialog(true);
+    
+    try {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-doctor`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          treatmentType: treatment.type,
+          disease: diagnosis.disease,
+          method: treatment.method,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch detailed steps');
+      }
+
+      const data = await response.json();
+      setDetailedSteps(data.detailedSteps || 'Unable to generate detailed steps.');
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to fetch detailed steps",
+        variant: "destructive",
+      });
+      setDetailedSteps('Unable to generate detailed steps at this time. Please try again later.');
+    } finally {
+      setLoadingSteps(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -79,7 +121,7 @@ const AiDoctor = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Upload Section */}
-          <Card>
+          <Card className="hover:shadow-lg transition-all duration-300">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Camera className="h-5 w-5 text-primary" />
@@ -90,7 +132,7 @@ const AiDoctor = () => {
             <CardContent>
               <div className="space-y-4">
                 {!uploadedImage ? (
-                  <div className="border-2 border-dashed border-border rounded-lg p-12 text-center hover:border-primary transition-colors">
+                  <div className="border-2 border-dashed border-border rounded-lg p-12 text-center hover:border-primary transition-all duration-300 hover:bg-muted/50">
                     <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                     <p className="text-sm text-muted-foreground mb-4">
                       Click to upload or drag and drop
@@ -103,14 +145,14 @@ const AiDoctor = () => {
                       id="image-upload"
                     />
                     <label htmlFor="image-upload">
-                      <Button asChild>
+                      <Button asChild className="hover:scale-105 transition-transform">
                         <span>Choose Image</span>
                       </Button>
                     </label>
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <div className="relative rounded-lg overflow-hidden">
+                    <div className="relative rounded-lg overflow-hidden shadow-md">
                       <img
                         src={uploadedImage}
                         alt="Uploaded plant"
@@ -131,14 +173,14 @@ const AiDoctor = () => {
                         setUploadedImage(null);
                         setDiagnosis(null);
                       }}
-                      className="w-full"
+                      className="w-full hover:bg-destructive/10 hover:border-destructive transition-colors"
                     >
                       Upload Different Image
                     </Button>
                   </div>
                 )}
 
-                <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+                <div className="bg-muted/50 rounded-lg p-4 space-y-2 hover:bg-muted transition-colors">
                   <p className="text-sm font-medium flex items-center gap-2">
                     <Info className="h-4 w-4 text-accent" />
                     Tips for Best Results
@@ -158,7 +200,7 @@ const AiDoctor = () => {
           <div className="space-y-6">
             {diagnosis ? (
               <>
-                <Card className="border-destructive/50">
+                <Card className="border-destructive/50 hover:shadow-lg transition-all duration-300">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <AlertTriangle className="h-5 w-5 text-destructive" />
@@ -180,7 +222,7 @@ const AiDoctor = () => {
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="hover:shadow-lg transition-all duration-300">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <CheckCircle2 className="h-5 w-5 text-success" />
@@ -192,7 +234,7 @@ const AiDoctor = () => {
                     {diagnosis.treatment.map((treatment: any, index: number) => (
                       <div
                         key={index}
-                        className="border rounded-lg p-4 hover:border-primary transition-colors"
+                        className="border rounded-lg p-4 hover:border-primary hover:shadow-md transition-all duration-300 hover:scale-[1.02]"
                       >
                         <div className="flex items-center justify-between mb-2">
                           <h4 className="font-semibold text-foreground">{treatment.type} Treatment</h4>
@@ -211,7 +253,12 @@ const AiDoctor = () => {
                             <span className="font-medium">{treatment.time}</span>
                           </div>
                         </div>
-                        <Button size="sm" variant="outline" className="w-full mt-3">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="w-full mt-3 hover:bg-primary hover:text-primary-foreground transition-colors"
+                          onClick={() => fetchDetailedSteps(treatment)}
+                        >
                           View Detailed Steps
                         </Button>
                       </div>
@@ -220,7 +267,7 @@ const AiDoctor = () => {
                 </Card>
               </>
             ) : (
-              <Card className="h-full flex items-center justify-center min-h-[400px]">
+              <Card className="h-full flex items-center justify-center min-h-[400px] hover:shadow-lg transition-all duration-300">
                 <CardContent className="text-center py-12">
                   <Scan className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
                   <p className="text-muted-foreground">
@@ -231,6 +278,42 @@ const AiDoctor = () => {
             )}
           </div>
         </div>
+
+        {/* Detailed Steps Dialog */}
+        <Dialog open={showStepsDialog} onOpenChange={setShowStepsDialog}>
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center justify-between">
+                <span>Detailed Treatment Steps - {selectedTreatment?.type}</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowStepsDialog(false)}
+                  className="h-6 w-6"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </DialogTitle>
+              <DialogDescription>
+                Step-by-step guide for {selectedTreatment?.method}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="mt-4">
+              {loadingSteps ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  <span className="ml-2">Generating detailed steps...</span>
+                </div>
+              ) : (
+                <div className="prose prose-sm max-w-none">
+                  <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                    {detailedSteps || 'No detailed steps available.'}
+                  </div>
+                </div>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </main>
     </div>
   );

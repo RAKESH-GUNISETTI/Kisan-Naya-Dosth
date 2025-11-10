@@ -12,6 +12,7 @@ import CropPlanning from "./pages/CropPlanning";
 import AiDoctor from "./pages/AiDoctor";
 import Reports from "./pages/Reports";
 import Auth from "./pages/Auth";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import AIChatbot from "./components/AIChatbot";
 
@@ -50,6 +51,7 @@ const App = () => (
               <Route path="/crop-planning" element={<ProtectedRoute><CropPlanning /></ProtectedRoute>} />
               <Route path="/ai-doctor" element={<ProtectedRoute><AiDoctor /></ProtectedRoute>} />
               <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
