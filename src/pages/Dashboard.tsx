@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import UsageStats from "@/components/UsageStats";
 import VoiceInterface from "@/components/VoiceInterface";
-import { Cloud, Droplets, Sun, TrendingUp, Calendar, AlertCircle, MapPin, DollarSign, Check } from "lucide-react";
+import { Cloud, Droplets, Sun, TrendingUp, Calendar, AlertCircle, MapPin, DollarSign } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -13,7 +14,7 @@ const Dashboard = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [tasks, setTasks] = useState<any[]>([]);
-  const [loadingTasks, setLoadingTasks] = useState(false);
+  const [loadingTasks, setLoadingTasks] = useState(true);
 
   useEffect(() => {
     if (user) {
@@ -23,27 +24,63 @@ const Dashboard = () => {
 
   const loadTasks = async () => {
     if (!user) return;
-    
-    setLoadingTasks(true);
+
     try {
       const { data, error } = await supabase
         .from('dashboard_tasks')
         .select('*')
         .eq('user_id', user.id)
-        .order('due_date', { ascending: true });
+        .order('due_date', { ascending: true })
+        .limit(3);
 
       if (error) throw error;
-      setTasks(data || []);
+
+      if (!data || data.length === 0) {
+        const sampleTasks = [
+          {
+            user_id: user.id,
+            title: "Fertilizer Application",
+            description: "Wheat Field",
+            due_date: new Date(Date.now() + 86400000).toISOString(),
+            field_name: "Wheat Field",
+            priority: 1,
+          },
+          {
+            user_id: user.id,
+            title: "Irrigation Cycle",
+            description: "Rice Field",
+            due_date: new Date(Date.now() + 172800000).toISOString(),
+            field_name: "Rice Field",
+            priority: 2,
+          },
+          {
+            user_id: user.id,
+            title: "Crop Inspection",
+            description: "All Fields",
+            due_date: new Date(Date.now() + 345600000).toISOString(),
+            field_name: "All Fields",
+            priority: 3,
+          },
+        ];
+
+        const { data: newTasks, error: insertError } = await supabase
+          .from('dashboard_tasks')
+          .insert(sampleTasks)
+          .select();
+
+        if (insertError) throw insertError;
+        setTasks(newTasks || []);
+      } else {
+        setTasks(data);
+      }
     } catch (error: any) {
-      console.error('Error loading tasks:', error);
+      console.error("Error loading tasks:", error);
     } finally {
       setLoadingTasks(false);
     }
   };
 
-  const handleMarkTaskDone = async (taskId: string) => {
-    if (!user) return;
-
+  const handleMarkDone = async (taskId: string) => {
     try {
       const { error } = await supabase
         .from('dashboard_tasks')
@@ -53,8 +90,8 @@ const Dashboard = () => {
       if (error) throw error;
 
       toast({
-        title: "Task Completed!",
-        description: "Great job on completing this task.",
+        title: "Task Completed",
+        description: "Task marked as done successfully.",
       });
 
       loadTasks();
@@ -67,33 +104,12 @@ const Dashboard = () => {
     }
   };
 
-  // Display tasks or default demo tasks
-  const displayTasks = tasks.length > 0 ? tasks : [
-    {
-      id: 'demo-1',
-      title: 'Fertilizer Application',
-      description: 'Tomorrow, 6:00 AM - Wheat Field',
-      field_name: 'Wheat Field',
-      status: 'pending',
-      priority: 1,
-    },
-    {
-      id: 'demo-2',
-      title: 'Irrigation Cycle',
-      description: 'In 2 days - Rice Field',
-      field_name: 'Rice Field',
-      status: 'pending',
-      priority: 2,
-    },
-    {
-      id: 'demo-3',
-      title: 'Crop Inspection',
-      description: 'In 4 days - All Fields',
-      field_name: 'All Fields',
-      status: 'pending',
-      priority: 3,
-    },
-  ];
+  const getDaysUntil = (dueDate: string) => {
+    const days = Math.ceil((new Date(dueDate).getTime() - Date.now()) / 86400000);
+    if (days === 0) return "Today";
+    if (days === 1) return "Tomorrow";
+    return `In ${days} days`;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -106,7 +122,7 @@ const Dashboard = () => {
               <h1 className="text-3xl font-bold text-foreground mb-2">Farm Dashboard</h1>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <MapPin className="h-4 w-4" />
-                <p>Jalandhar, Punjab • Today: Wed, Dec 18, 2024</p>
+                <p>Jalandhar, Punjab • Today: {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</p>
               </div>
             </div>
             <div className="hidden md:flex items-center gap-4">
@@ -118,12 +134,10 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Usage Statistics */}
         <div className="mb-8">
           <UsageStats />
         </div>
 
-        {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {[
             { icon: TrendingUp, title: "Total Acreage", value: "25 Acres", desc: "Wheat: 15 | Rice: 10", color: "text-muted-foreground", delay: 0 },
@@ -151,7 +165,6 @@ const Dashboard = () => {
           })}
         </div>
 
-        {/* Alerts, Tasks & Voice */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <Card className="shadow-soft hover:shadow-medium transition-all duration-300 animate-slide-in-left">
             <CardHeader>
@@ -191,50 +204,28 @@ const Dashboard = () => {
               <CardDescription>Scheduled activities for this week</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {displayTasks.map((task, index) => {
-                const isCompleted = task.status === 'completed';
-                const priorityColors = ['bg-primary', 'bg-accent', 'bg-success'];
-                const dotColor = priorityColors[index % 3] || 'bg-primary';
-                
-                return (
-                  <div 
-                    key={task.id}
-                    className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-300 ${
-                      isCompleted ? 'opacity-50 border-success' : 'hover:border-primary hover:scale-102 cursor-pointer'
-                    }`}
-                  >
-                    <div className={`h-2 w-2 rounded-full ${isCompleted ? 'bg-success' : dotColor} ${!isCompleted && task.priority === 1 ? 'animate-pulse' : ''}`} />
-                    <div className="flex-1">
-                      <p className={`font-medium text-sm ${isCompleted ? 'line-through' : ''}`}>
-                        {task.title}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {task.description || `${task.field_name}`}
-                      </p>
-                    </div>
-                    {isCompleted ? (
-                      <Check className="h-4 w-4 text-success" />
-                    ) : (
-                      <Button 
-                        size="sm" 
-                        variant="ghost"
-                        onClick={() => task.id.startsWith('demo-') ? null : handleMarkTaskDone(task.id)}
-                        disabled={task.id.startsWith('demo-')}
-                      >
-                        Mark Done
-                      </Button>
-                    )}
+              {loadingTasks ? (
+                <div className="text-center py-4 text-muted-foreground">Loading tasks...</div>
+              ) : tasks.filter(t => t.status !== 'completed').slice(0, 3).map((task, idx) => (
+                <div key={task.id} className="flex items-center gap-3 p-3 rounded-lg border hover:border-primary transition-all duration-300 hover:scale-102 cursor-pointer">
+                  <div className={`h-2 w-2 rounded-full ${idx === 0 ? 'bg-primary animate-pulse' : idx === 1 ? 'bg-accent' : 'bg-success'}`} />
+                  <div className="flex-1">
+                    <p className="font-medium text-sm">{task.title}</p>
+                    <p className="text-xs text-muted-foreground">{getDaysUntil(task.due_date)} - {task.field_name}</p>
                   </div>
-                );
-              })}
+                  <Button size="sm" variant="ghost" onClick={() => handleMarkDone(task.id)}>Mark Done</Button>
+                </div>
+              ))}
+              
+              {tasks.filter(t => t.status !== 'completed').length === 0 && !loadingTasks && (
+                <div className="text-center py-4 text-muted-foreground">No pending tasks</div>
+              )}
             </CardContent>
           </Card>
 
-          {/* Voice Interface */}
           <div className="animate-slide-in-right" style={{ animationDelay: "400ms" }}>
             <VoiceInterface />
             
-            {/* Market Prices */}
             <Card className="mt-6 shadow-soft">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
@@ -263,7 +254,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Crop Calendar */}
         <Card className="shadow-soft hover:shadow-medium transition-all duration-300">
           <CardHeader>
             <CardTitle>Crop Growth Calendar</CardTitle>
