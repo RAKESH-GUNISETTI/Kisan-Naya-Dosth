@@ -14,6 +14,132 @@ export type Database = {
   }
   public: {
     Tables: {
+      crop_plans: {
+        Row: {
+          acreage: number
+          created_at: string
+          crop_type: string
+          id: string
+          irrigation_level: number
+          projected_cost: number
+          projected_profit: number
+          projected_revenue: number
+          projected_yield: number
+          seed_rate: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          acreage: number
+          created_at?: string
+          crop_type: string
+          id?: string
+          irrigation_level: number
+          projected_cost: number
+          projected_profit: number
+          projected_revenue: number
+          projected_yield: number
+          seed_rate: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          acreage?: number
+          created_at?: string
+          crop_type?: string
+          id?: string
+          irrigation_level?: number
+          projected_cost?: number
+          projected_profit?: number
+          projected_revenue?: number
+          projected_yield?: number
+          seed_rate?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      crop_scenarios: {
+        Row: {
+          acreage: number
+          created_at: string
+          crop_type: string
+          id: string
+          irrigation_level: number
+          notes: string | null
+          projected_profit: number
+          projected_yield: number
+          scenario_name: string
+          seed_rate: number
+          user_id: string
+        }
+        Insert: {
+          acreage: number
+          created_at?: string
+          crop_type: string
+          id?: string
+          irrigation_level: number
+          notes?: string | null
+          projected_profit: number
+          projected_yield: number
+          scenario_name: string
+          seed_rate: number
+          user_id: string
+        }
+        Update: {
+          acreage?: number
+          created_at?: string
+          crop_type?: string
+          id?: string
+          irrigation_level?: number
+          notes?: string | null
+          projected_profit?: number
+          projected_yield?: number
+          scenario_name?: string
+          seed_rate?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      dashboard_tasks: {
+        Row: {
+          created_at: string
+          description: string | null
+          due_date: string | null
+          field_name: string | null
+          id: string
+          priority: number | null
+          status: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          field_name?: string | null
+          id?: string
+          priority?: number | null
+          status?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          field_name?: string | null
+          id?: string
+          priority?: number | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -49,38 +175,6 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
-      }
-      chat_history: {
-        Row: {
-          id: string
-          user_id: string
-          messages: Json
-          created_at: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          messages?: Json
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          messages?: Json
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "chat_history_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
       }
     }
     Views: {

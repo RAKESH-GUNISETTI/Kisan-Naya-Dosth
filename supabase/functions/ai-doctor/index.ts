@@ -43,10 +43,11 @@ Format the response in clear, actionable steps that a farmer can easily follow. 
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash',
         messages: [
-          { role: 'system', content: 'You are an expert agricultural consultant providing detailed farming treatment plans.' },
+          { role: 'system', content: 'You are an expert agricultural consultant providing detailed farming treatment plans. Always respond with clear, numbered steps.' },
           { role: 'user', content: prompt }
         ],
         temperature: 0.7,
+        max_tokens: 2000,
       }),
     });
 
