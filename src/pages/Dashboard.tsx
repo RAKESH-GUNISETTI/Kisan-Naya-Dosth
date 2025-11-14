@@ -1,11 +1,100 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import UsageStats from "@/components/UsageStats";
 import VoiceInterface from "@/components/VoiceInterface";
-import { Cloud, Droplets, Sun, TrendingUp, Calendar, AlertCircle, MapPin, DollarSign } from "lucide-react";
+import { Cloud, Droplets, Sun, TrendingUp, Calendar, AlertCircle, MapPin, DollarSign, Check } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [loadingTasks, setLoadingTasks] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      loadTasks();
+    }
+  }, [user]);
+
+  const loadTasks = async () => {
+    if (!user) return;
+    
+    setLoadingTasks(true);
+    try {
+      const { data, error } = await supabase
+        .from('dashboard_tasks')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('due_date', { ascending: true });
+
+      if (error) throw error;
+      setTasks(data || []);
+    } catch (error: any) {
+      console.error('Error loading tasks:', error);
+    } finally {
+      setLoadingTasks(false);
+    }
+  };
+
+  const handleMarkTaskDone = async (taskId: string) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('dashboard_tasks')
+        .update({ status: 'completed' })
+        .eq('id', taskId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Task Completed!",
+        description: "Great job on completing this task.",
+      });
+
+      loadTasks();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update task",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Display tasks or default demo tasks
+  const displayTasks = tasks.length > 0 ? tasks : [
+    {
+      id: 'demo-1',
+      title: 'Fertilizer Application',
+      description: 'Tomorrow, 6:00 AM - Wheat Field',
+      field_name: 'Wheat Field',
+      status: 'pending',
+      priority: 1,
+    },
+    {
+      id: 'demo-2',
+      title: 'Irrigation Cycle',
+      description: 'In 2 days - Rice Field',
+      field_name: 'Rice Field',
+      status: 'pending',
+      priority: 2,
+    },
+    {
+      id: 'demo-3',
+      title: 'Crop Inspection',
+      description: 'In 4 days - All Fields',
+      field_name: 'All Fields',
+      status: 'pending',
+      priority: 3,
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -102,32 +191,42 @@ const Dashboard = () => {
               <CardDescription>Scheduled activities for this week</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="flex items-center gap-3 p-3 rounded-lg border hover:border-primary transition-all duration-300 hover:scale-102 cursor-pointer">
-                <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                <div className="flex-1">
-                  <p className="font-medium text-sm">Fertilizer Application</p>
-                  <p className="text-xs text-muted-foreground">Tomorrow, 6:00 AM - Wheat Field</p>
-                </div>
-                <Button size="sm" variant="ghost">Mark Done</Button>
-              </div>
-
-              <div className="flex items-center gap-3 p-3 rounded-lg border">
-                <div className="h-2 w-2 rounded-full bg-accent" />
-                <div className="flex-1">
-                  <p className="font-medium text-sm">Irrigation Cycle</p>
-                  <p className="text-xs text-muted-foreground">In 2 days - Rice Field</p>
-                </div>
-                <Button size="sm" variant="ghost">Mark Done</Button>
-              </div>
-
-              <div className="flex items-center gap-3 p-3 rounded-lg border">
-                <div className="h-2 w-2 rounded-full bg-success" />
-                <div className="flex-1">
-                  <p className="font-medium text-sm">Crop Inspection</p>
-                  <p className="text-xs text-muted-foreground">In 4 days - All Fields</p>
-                </div>
-                <Button size="sm" variant="ghost">Mark Done</Button>
-              </div>
+              {displayTasks.map((task, index) => {
+                const isCompleted = task.status === 'completed';
+                const priorityColors = ['bg-primary', 'bg-accent', 'bg-success'];
+                const dotColor = priorityColors[index % 3] || 'bg-primary';
+                
+                return (
+                  <div 
+                    key={task.id}
+                    className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-300 ${
+                      isCompleted ? 'opacity-50 border-success' : 'hover:border-primary hover:scale-102 cursor-pointer'
+                    }`}
+                  >
+                    <div className={`h-2 w-2 rounded-full ${isCompleted ? 'bg-success' : dotColor} ${!isCompleted && task.priority === 1 ? 'animate-pulse' : ''}`} />
+                    <div className="flex-1">
+                      <p className={`font-medium text-sm ${isCompleted ? 'line-through' : ''}`}>
+                        {task.title}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {task.description || `${task.field_name}`}
+                      </p>
+                    </div>
+                    {isCompleted ? (
+                      <Check className="h-4 w-4 text-success" />
+                    ) : (
+                      <Button 
+                        size="sm" 
+                        variant="ghost"
+                        onClick={() => task.id.startsWith('demo-') ? null : handleMarkTaskDone(task.id)}
+                        disabled={task.id.startsWith('demo-')}
+                      >
+                        Mark Done
+                      </Button>
+                    )}
+                  </div>
+                );
+              })}
             </CardContent>
           </Card>
 
