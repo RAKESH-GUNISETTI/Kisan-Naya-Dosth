@@ -2,7 +2,7 @@
 
 ## Project info
 
-**URL**: https://kisan-naya-dosth.ai.lovable.app
+**URL**: https://kisan-naya-dost.ai.lovable.app
 
 ## How can I edit this code?
 
