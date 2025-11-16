@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -8,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import aiDoctorIcon from "@/assets/ai-doctor-icon.png";
 
 const AiDoctor = () => {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -204,7 +206,7 @@ const AiDoctor = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <AlertTriangle className="h-5 w-5 text-destructive" />
-                      Diagnosis
+                      {t('aiDoctor.diagnosis')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -212,10 +214,10 @@ const AiDoctor = () => {
                       <p className="text-lg font-bold text-foreground">{diagnosis.disease}</p>
                       <div className="flex items-center gap-4 mt-2 text-sm">
                         <span className="text-muted-foreground">
-                          Severity: <span className="font-medium text-destructive">{diagnosis.severity}</span>
+                          {t('aiDoctor.severity')}: <span className="font-medium text-destructive">{diagnosis.severity}</span>
                         </span>
                         <span className="text-muted-foreground">
-                          Confidence: <span className="font-medium text-foreground">{diagnosis.confidence}%</span>
+                          {t('aiDoctor.confidence')}: <span className="font-medium text-foreground">{diagnosis.confidence}%</span>
                         </span>
                       </div>
                     </div>
@@ -226,9 +228,9 @@ const AiDoctor = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <CheckCircle2 className="h-5 w-5 text-success" />
-                      Treatment Action Plan
+                      {t('aiDoctor.treatmentPlan')}
                     </CardTitle>
-                    <CardDescription>Choose the best approach for your situation</CardDescription>
+                    <CardDescription>{t('aiDoctor.chooseBest')}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {diagnosis.treatment.map((treatment: any, index: number) => (
@@ -237,19 +239,23 @@ const AiDoctor = () => {
                         className="border rounded-lg p-4 hover:border-primary hover:shadow-md transition-all duration-300 hover:scale-[1.02]"
                       >
                         <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-semibold text-foreground">{treatment.type} Treatment</h4>
+                          <h4 className="font-semibold text-foreground">
+                            {treatment.type === 'Organic' ? t('aiDoctor.organicTreatment') : 
+                             treatment.type === 'Standard' ? t('aiDoctor.standardTreatment') : 
+                             t('aiDoctor.aggressiveTreatment')}
+                          </h4>
                           <span className="text-xs bg-success/10 text-success px-2 py-1 rounded">
-                            {treatment.effectiveness} effective
+                            {treatment.effectiveness} {t('aiDoctor.effectiveness').toLowerCase()}
                           </span>
                         </div>
                         <p className="text-sm text-muted-foreground mb-3">{treatment.method}</p>
                         <div className="grid grid-cols-2 gap-2 text-xs">
                           <div>
-                            <span className="text-muted-foreground">Cost:</span>{" "}
+                            <span className="text-muted-foreground">{t('aiDoctor.cost')}:</span>{" "}
                             <span className="font-medium">{treatment.cost}</span>
                           </div>
                           <div>
-                            <span className="text-muted-foreground">Time:</span>{" "}
+                            <span className="text-muted-foreground">{t('aiDoctor.time')}:</span>{" "}
                             <span className="font-medium">{treatment.time}</span>
                           </div>
                         </div>
@@ -259,7 +265,7 @@ const AiDoctor = () => {
                           className="w-full mt-3 hover:bg-primary hover:text-primary-foreground transition-colors"
                           onClick={() => fetchDetailedSteps(treatment)}
                         >
-                          View Detailed Steps
+                          {t('aiDoctor.viewDetails')}
                         </Button>
                       </div>
                     ))}

@@ -161,5 +161,27 @@
     "previous": "Previous",
     "complete": "Complete Setup",
     "skip": "Skip for now"
+  },
+  "aiDoctor": {
+    "title": "AI Crop Doctor",
+    "subtitle": "Upload a photo of your crop for instant disease diagnosis and treatment recommendations",
+    "uploadPrompt": "Take a Photo or Upload Image",
+    "uploadHint": "Supported formats: JPG, PNG up to 10MB",
+    "analyzing": "Analyzing your crop...",
+    "diagnosis": "Diagnosis",
+    "severity": "Severity",
+    "confidence": "Confidence",
+    "treatmentPlan": "Treatment Action Plan",
+    "chooseBest": "Choose the best approach for your situation",
+    "organicTreatment": "Organic Treatment",
+    "standardTreatment": "Standard Treatment",
+    "aggressiveTreatment": "Aggressive Treatment",
+    "cost": "Cost",
+    "time": "Time",
+    "effectiveness": "Effectiveness",
+    "viewDetails": "View Detailed Steps",
+    "detailedSteps": "Detailed Treatment Steps",
+    "close": "Close",
+    "loadingSteps": "Loading detailed steps..."
   }
 }
