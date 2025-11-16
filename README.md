@@ -1,22 +1,16 @@
-# Welcome to your Lovable project
+# Welcome to my Farmer-Friend project
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/df8a9f5c-f584-4f3b-9cd7-891b2e5f80d3
+**URL**: https://kisan-naya-dosth.ai.lovable.app
 
 ## How can I edit this code?
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/df8a9f5c-f584-4f3b-9cd7-891b2e5f80d3) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
+You can work with the code locally using your preferred IDE. The project requires Node.js and npm.
 
 **Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+If you want to work locally using your own IDE, you can clone this repo and push changes. 
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
@@ -35,6 +29,9 @@ npm i
 # Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
+- The development server provides auto-reloading and instant preview of your changes.
+
+- Make your edits, save the files, and commit changes using Git.
 
 **Edit a file directly in GitHub**
 
@@ -54,20 +51,38 @@ npm run dev
 
 This project is built with:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- Frontend: React, TypeScript, Tailwind CSS, shadcn-ui, Vite
+- Backend: Node.js / FastAPI (Python) [depending on your setup]
+- AI/ML: TensorFlow / PyTorch for plant disease detection and predictive models
+- Database: PostgreSQL (with PostGIS for geospatial features)
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/df8a9f5c-f584-4f3b-9cd7-891b2e5f80d3) and click on Share -> Publish.
+You can deploy the project on any hosting platform that supports Node.js (e.g., Vercel, Netlify, or your own server). 
+Typical deployment steps:
+
+```sh
+# Build the project
+npm run build
+
+# Serve the production build
+npm run start
+
+
+## License
+- This project is licensed under the MIT License.
+
+
+## Contributing
+- Fork the repository.
+- Create a feature branch: git checkout -b feature-name
+- Commit your changes: git commit -m "Description of changes"
+- Push to your branch: git push origin feature-name
+- Open a Pull Request for review.
+
 
 ## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- Yes, you can!
+- To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
